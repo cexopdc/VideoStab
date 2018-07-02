@@ -1,0 +1,2 @@
+﻿  videostab.cpp
+c:\users\ehx001\source\repos\videostab\videostab\videostab.cpp(90): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
