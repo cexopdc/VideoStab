@@ -79,18 +79,20 @@ struct Trajectory
 //
 int main(int argc, char **argv)
 {
-	if (argc < 2) {
+	if (argc > 2) {
 		cout << "./VideoStab [video.avi]" << endl;
 		return 0;
 	}
+
 	// For further analysis
 	ofstream out_transform("prev_to_cur_transformation.txt");
 	ofstream out_trajectory("trajectory.txt");
 	ofstream out_smoothed_trajectory("smoothed_trajectory.txt");
 	ofstream out_new_transform("new_prev_to_cur_transformation.txt");
 
-	//VideoCapture cap(argv[1]);
-	VideoCapture cap(0);
+	VideoCapture cap;
+	if (argc = 2) cap.open(argv[1]);
+	if (argc = 1) cap.open(0);
 	assert(cap.isOpened());
 
 	Mat cur, cur_grey;

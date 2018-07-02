@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="videostabKalman.cpp">
+    <ClCompile Include="videostab.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
