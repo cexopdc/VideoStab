@@ -18,7 +18,7 @@ using namespace cv;
 // This video stablisation smooths the global trajectory using a sliding average window
 
 //const int SMOOTHING_RADIUS = 15; // In frames. The larger the more stable the video, but less reactive to sudden panning
-const int HORIZONTAL_BORDER_CROP = 20; // In pixels. Crops the border to reduce the black borders from stabilisation being too noticeable.
+const int HORIZONTAL_BORDER_CROP = 20; //20 // In pixels. Crops the border to reduce the black borders from stabilisation being too noticeable.
 
 									   // 1. Get previous to current frame transformation (dx, dy, da) for all frames
 									   // 2. Accumulate the transformations to get the image trajectory
@@ -90,9 +90,9 @@ int main(int argc, char **argv)
 	ofstream out_smoothed_trajectory("smoothed_trajectory.txt");
 	ofstream out_new_transform("new_prev_to_cur_transformation.txt");
 
-	VideoCapture cap;
-	if (argc = 2) cap.open(argv[1]);
-	if (argc = 1) cap.open(0);
+	VideoCapture cap(0);
+	//if (argc = 2) cap.open(argv[1]);
+	//if (argc = 1) cap.open(-1);
 	assert(cap.isOpened());
 
 	Mat cur, cur_grey;
@@ -119,7 +119,7 @@ int main(int argc, char **argv)
 	Trajectory K;//gain
 	Trajectory	z;//actual measurement
 	double pstd = 4e-3;//can be changed
-	double cstd = 0.25;//can be changed
+	double cstd = 0.70;//0.25;//can be changed
 	Trajectory Q(pstd, pstd, pstd);// process noise covariance
 	Trajectory R(cstd, cstd, cstd);// measurement noise covariance 
 								   // Step 4 - Generate new set of previous to current transform, such that the trajectory ends up being the same as the smoothed trajectory
@@ -196,6 +196,7 @@ int main(int argc, char **argv)
 		if (k == 1) {
 			// intial guesses
 			X = Trajectory(0, 0, 0); //Initial estimate,  set 0
+			//P = Trajectory(1, 1, 1); //set error variance,set 1
 			P = Trajectory(1, 1, 1); //set error variance,set 1
 		}
 		else
@@ -241,18 +242,32 @@ int main(int argc, char **argv)
 		// Resize cur2 back to cur size, for better side by side comparison
 		resize(cur2, cur2, cur.size());
 
-		// Now draw the original and stablised side by side for coolness
+		// Now draw the original and stablised side by side for comparison
 		Mat canvas = Mat::zeros(cur.rows, cur.cols * 2 + 10, cur.type());
+		Mat canvasZoomed = Mat::zeros(cur.rows, cur.cols * 2 + 10, cur.type());
+
+		// zoom in the preview to 10%, and centered
+		Mat prev_zoomed(prev,Range(prev.rows * 0.4, prev.rows * 0.6),Range(prev.cols * 0.4, prev.cols * 0.6));
+		resize(prev_zoomed, prev_zoomed, prev.size());
+		Mat cur_zoomed(cur2, Range(cur2.rows * 0.4, cur2.rows * 0.6), Range(cur2.cols * 0.4, cur2.cols * 0.6));
+		resize(cur_zoomed, cur_zoomed, cur2.size());
 
 		prev.copyTo(canvas(Range::all(), Range(0, cur2.cols)));
+		prev_zoomed.copyTo(canvasZoomed(Range::all(), Range(0, cur2.cols)));
+	
 		cur2.copyTo(canvas(Range::all(), Range(cur2.cols + 10, cur2.cols * 2 + 10)));
+		cur_zoomed.copyTo(canvasZoomed(Range::all(), Range(cur2.cols + 10, cur2.cols * 2 + 10)));
 
 		// If too big to fit on the screen, then scale it down by 2, hopefully it'll fit :)
 		if (canvas.cols > 1920) {
 			resize(canvas, canvas, Size(canvas.cols / 2, canvas.rows / 2));
 		}
+		if (canvasZoomed.cols > 1920) {
+			resize(canvasZoomed, canvasZoomed, Size(canvasZoomed.cols / 2, canvasZoomed.rows / 2));
+		}
 		//outputVideo<<canvas;
 		imshow("before and after", canvas);
+		imshow("before and after Zoomed", canvasZoomed);
 
 		waitKey(10);
 		//

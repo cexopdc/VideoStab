@@ -1,1 +1,5 @@
-﻿  VideoStab.vcxproj -> C:\Users\ehx001\source\repos\VideoStab\x64\Debug\VideoStab.exe
+﻿  videostabKalman.cpp
+c:\users\ehx001\source\repos\videostab\videostab\videostabkalman.cpp(137): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\ehx001\source\repos\videostab\videostab\videostabkalman.cpp(250): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\ehx001\source\repos\videostab\videostab\videostabkalman.cpp(252): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  VideoStab.vcxproj -> C:\Users\ehx001\source\repos\VideoStab\x64\Debug\VideoStab.exe

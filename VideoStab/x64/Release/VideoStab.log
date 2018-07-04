@@ -1,5 +1,7 @@
 ﻿  videostabKalman.cpp
 c:\users\ehx001\source\repos\videostab\videostab\videostabkalman.cpp(137): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\ehx001\source\repos\videostab\videostab\videostabkalman.cpp(249): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\ehx001\source\repos\videostab\videostab\videostabkalman.cpp(251): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
   Generating code
   1 of 538 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
