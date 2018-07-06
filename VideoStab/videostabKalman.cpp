@@ -1,11 +1,3 @@
-/*
-Thanks Nghia Ho for his excellent code.
-And,I modified the smooth step using a simple kalman filter .
-So,It can processes live video streaming.
-modified by chen jia.
-email:chenjia2013@foxmail.com
-*/
-
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include <cassert>
@@ -18,7 +10,7 @@ using namespace cv;
 // This video stablisation smooths the global trajectory using a sliding average window
 
 //const int SMOOTHING_RADIUS = 15; // In frames. The larger the more stable the video, but less reactive to sudden panning
-const int HORIZONTAL_BORDER_CROP = 20; //20 // In pixels. Crops the border to reduce the black borders from stabilisation being too noticeable.
+const int HORIZONTAL_BORDER_CROP = 0; //20 // In pixels. Crops the border to reduce the black borders from stabilisation being too noticeable.
 
 									   // 1. Get previous to current frame transformation (dx, dy, da) for all frames
 									   // 2. Accumulate the transformations to get the image trajectory
@@ -131,7 +123,9 @@ int main(int argc, char **argv)
 
 	int vert_border = HORIZONTAL_BORDER_CROP * prev.rows / prev.cols; // get the aspect ratio correct
 	VideoWriter outputVideo;
-	outputVideo.open("compare.avi", CV_FOURCC('X', 'V', 'I', 'D'), 24, cvSize(cur.rows, cur.cols * 2 + 10), true);
+	VideoWriter outputVideoZoomed;
+	bool recordStarted = false;
+	//outputVideo.open("compare.avi", CV_FOURCC('X', 'V', 'I', 'D'), 24, cvSize(cur.rows, cur.cols * 2 + 10), true);
 	//
 	int k = 1;
 	int max_frames = cap.get(CV_CAP_PROP_FRAME_COUNT);
@@ -265,7 +259,16 @@ int main(int argc, char **argv)
 		if (canvasZoomed.cols > 1920) {
 			resize(canvasZoomed, canvasZoomed, Size(canvasZoomed.cols / 2, canvasZoomed.rows / 2));
 		}
-		//outputVideo<<canvas;
+
+		if (!recordStarted)
+		{
+			recordStarted = true;
+			outputVideo.open("compare.avi", CV_FOURCC('X', 'V', 'I', 'D'), 24, Size(canvas.cols, canvas.rows), true);
+			outputVideoZoomed.open("compareZoomed.avi", CV_FOURCC('X', 'V', 'I', 'D'), 24, Size(canvasZoomed.cols, canvasZoomed.rows), true);
+		}
+
+		outputVideo<<canvas;
+		outputVideoZoomed << canvasZoomed;
 		imshow("before and after", canvas);
 		imshow("before and after Zoomed", canvasZoomed);
 
